@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Apr  4 10:13:29 2024
-
-@author: swordsman
-"""
-
 import numpy as np
 from PIL import Image, ImageSequence
 from scipy.fft import fft2, ifft2, fftshift

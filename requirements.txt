@@ -1,0 +1,9 @@
+numpy
+Pillow
+scipy
+matplotlib
+scikit-learn
+tensorflow
+tqdm
+cupy-cuda12x
+grpcio>=1.68.1

@@ -11,6 +11,8 @@ import itertools
 import os
 from matplotlib.colors import LogNorm  # Add this import
 
+
+### Step 1 Get Some Data
 # Load the speckle images
 speckle_imgs = np.load('./FINALspeckle_imgs.npy')  # pwd should look like "/home/aaron/Documents/AFIT/SpeckleResearch"
 
@@ -51,6 +53,8 @@ if run_correlation_test:
     plt.savefig('confusion_matrix_correlation_test.png')  # Save the plot to a file
     plt.close()
 
+### Step 3 Prepare our Data
+
 # Get the shape of the data
 num_iterations, num_speckles, img_height, img_width = speckle_imgs.shape
 
@@ -63,6 +67,8 @@ X = X / 255.0
 # Create labels based on the second dimension index
 wavelengths = np.arange(0, 256)  # Wavelengths from 0 to 255
 labels = np.tile(wavelengths, num_iterations)  # Repeat for each iteration
+
+### Step 4 Determine an Evaluation Method 
 
 # Create a stratified split
 sss = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=42)
@@ -89,6 +95,7 @@ print(f'Testing labels shape: {y_test.shape}')
 # Function to build the model
 def build_model(model_flag):
     if model_flag == 1:  # basic
+        ### Step 5 Develop a Model
         model = Sequential([
             Input(shape=(img_height, img_width, 1)),
             Conv2D(32, (3, 3), activation='relu', padding='same'),
@@ -101,6 +108,7 @@ def build_model(model_flag):
             Dense(1)
         ])
     elif model_flag == 2:  # overfit
+        ### Step 6 Overfit Model
         model = Sequential([
             Input(shape=(img_height, img_width, 1)),
             Conv2D(64, (3, 3), activation='relu', padding='same'),
@@ -117,6 +125,7 @@ def build_model(model_flag):
             Dense(1)
         ])
     elif model_flag == 3:  # regularized
+        ### Step 7 Regularized Model
         model = Sequential([
             Input(shape=(img_height, img_width, 1)),
             Conv2D(32, (3, 3), activation='relu', padding='same'),
@@ -141,9 +150,9 @@ def build_model(model_flag):
 # Flag to use a saved model or train a new one
 use_saved_model = False  # Set to False to train a new model
 
-if use_saved_model and os.path.exists('best_model_overfit4.h5'):
+if use_saved_model and os.path.exists('best_model_regularized4.h5'):
     # Load the saved model
-    best_model = load_model('best_model_overfit4.h5', compile=False)
+    best_model = load_model('best_model_regularized4.h5', compile=False)
     best_model.compile(optimizer=Adam(learning_rate=0.001), loss=MeanSquaredError(), metrics=[MeanAbsoluteError()])
     print('Loaded saved model.')
     
@@ -164,6 +173,7 @@ else:
         model = build_model(model_flag=3)  # Change model_flag to 2 for overfit model or 3 for regularized model
         
         # Compile the model
+        ### Step 2 Measures of Success
         model.compile(optimizer=Adam(learning_rate=0.001), loss=MeanSquaredError(), metrics=[MeanAbsoluteError()])
         
         # Callback for learning rate reduction
